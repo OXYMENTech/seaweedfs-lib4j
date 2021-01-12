@@ -2,8 +2,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>net.anumbrella.seaweedfs</groupId>
-  <artifactId>seaweedfs-java-client</artifactId>
-  <version>0.0.3.RELEASE</version>
+  <artifactId>seaweedfs-lib4j</artifactId>
+  <version>0.0.1.RELEASE</version>
   <packaging>jar</packaging>
 
   <name>seaweedfs-java-client</name>
@@ -35,6 +35,11 @@
       <email>1197173684@qq.com</email>
       <url>http://blog.anumbrella.net</url>
     </developer>
+    <developer>
+        <name>Neeson</name>
+        <email>neeson.z@oxymen.tech</email>
+        <url>https://oxymen.tech</url>
+      </developer>
   </developers>
 
   <properties>
