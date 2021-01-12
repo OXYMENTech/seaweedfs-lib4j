@@ -31,7 +31,7 @@ public class MasterWrapperTest {
     public void setUp() {
         ConnectionProperties connectionProperties
                 = new ConnectionProperties.Builder()
-                .host("localhost")
+                .host("192.168.0.131")
                 .port(9333)
                 .maxConnection(100)
                 .connectionTimeout(600)

@@ -1,25 +1,25 @@
 package net.anumbrella.seaweedfs;
 
-import net.anumbrella.seaweedfs.core.Connection;
-import net.anumbrella.seaweedfs.core.ConnectionProperties;
-import net.anumbrella.seaweedfs.core.FileSource;
-import net.anumbrella.seaweedfs.core.FileTemplate;
-import net.anumbrella.seaweedfs.core.FilerWrapper;
-import net.anumbrella.seaweedfs.core.file.FileHandleStatus;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import net.anumbrella.seaweedfs.core.Connection;
+import net.anumbrella.seaweedfs.core.ConnectionProperties;
+import net.anumbrella.seaweedfs.core.FileSource;
+import net.anumbrella.seaweedfs.core.FileTemplate;
+import net.anumbrella.seaweedfs.core.file.FileHandleStatus;
 
 public class FileSourceTest {
     private static FileSource fileSource = new FileSource();
     @Before
     public void setUp() {
         ConnectionProperties connectionProperties
-                = new ConnectionProperties.Builder().host("localhost").port(9333).maxConnection(100).build();
+                = new ConnectionProperties.Builder().host("192.168.0.131").port(9333).maxConnection(100).build();
         fileSource.setProperties(connectionProperties);
         fileSource.startup();
     }
@@ -34,9 +34,10 @@ public class FileSourceTest {
     public void testUpload() throws IOException {
         Connection connection = fileSource.getConnection();
         FileTemplate fileTemplate = new FileTemplate(connection);
-        File file = new File("C:\\Users\\zhiqu\\Downloads\\reba.jpg");
+        File file = new File("/Users/neeson/Downloads/download.png");
         FileInputStream fileInputStream = new FileInputStream(file);
         FileHandleStatus fileHandleStatus = fileTemplate.saveFileByStream("reba.jpg", fileInputStream);
+        System.out.println(fileHandleStatus.getFileId());
         Assert.assertNotNull(fileHandleStatus.getFileId());
     }
 
@@ -44,7 +45,7 @@ public class FileSourceTest {
     public void testDeleteFile() throws IOException {
         Connection connection = fileSource.getConnection();
         FileTemplate fileTemplate = new FileTemplate(connection);
-        File file = new File("C:\\Users\\zhiqu\\Downloads\\reba.jpg");
+        File file = new File("/Users/neeson/Downloads/order-1610073661681.pdf");
         FileInputStream fileInputStream = new FileInputStream(file);
         FileHandleStatus fileHandleStatus = fileTemplate.saveFileByStream("reba.jpg", fileInputStream);
         fileTemplate.deleteFile(fileHandleStatus.getFileId());

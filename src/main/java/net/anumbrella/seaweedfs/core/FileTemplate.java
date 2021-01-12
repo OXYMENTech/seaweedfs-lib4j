@@ -1,16 +1,5 @@
 package net.anumbrella.seaweedfs.core;
 
-import net.anumbrella.seaweedfs.core.content.*;
-import net.anumbrella.seaweedfs.core.file.FileHandleStatus;
-import net.anumbrella.seaweedfs.core.http.HeaderResponse;
-import net.anumbrella.seaweedfs.core.http.StreamResponse;
-import net.anumbrella.seaweedfs.exception.SeaweedfsException;
-import net.anumbrella.seaweedfs.exception.SeaweedfsFileDeleteException;
-import net.anumbrella.seaweedfs.exception.SeaweedfsFileNotFoundException;
-import org.apache.http.entity.ContentType;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -19,6 +8,22 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import org.apache.http.entity.ContentType;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+import net.anumbrella.seaweedfs.core.content.AssignFileKeyParams;
+import net.anumbrella.seaweedfs.core.content.AssignFileKeyResult;
+import net.anumbrella.seaweedfs.core.content.LocationResult;
+import net.anumbrella.seaweedfs.core.content.LookupVolumeParams;
+import net.anumbrella.seaweedfs.core.content.LookupVolumeResult;
+import net.anumbrella.seaweedfs.core.file.FileHandleStatus;
+import net.anumbrella.seaweedfs.core.http.HeaderResponse;
+import net.anumbrella.seaweedfs.core.http.StreamResponse;
+import net.anumbrella.seaweedfs.exception.SeaweedfsException;
+import net.anumbrella.seaweedfs.exception.SeaweedfsFileDeleteException;
+import net.anumbrella.seaweedfs.exception.SeaweedfsFileNotFoundException;
 
 public class FileTemplate implements InitializingBean, DisposableBean {
 
@@ -64,9 +69,22 @@ public class FileTemplate implements InitializingBean, DisposableBean {
      * @throws IOException Http connection is fail or server response within some error message.
      */
     public FileHandleStatus saveFileByStream(String fileName, InputStream stream) throws IOException {
-        return saveFileByStream(fileName, stream, ContentType.DEFAULT_BINARY);
+        return saveFileByStream(fileName, stream, ContentType.DEFAULT_BINARY, "");
     }
 
+
+    /**
+     * 通过Master的上传接口，上传文件到SeaweedFS
+     * 
+     * @param fileName 文件名
+     * @param stream 文件应以InputStream的形式传入该接口
+     * @param ttl file expiration time limit, example: 3m for 3 minutes. units: m-minute, h-hour, d-day, w-week, M-month, y-year
+     * @return SeaweedFS会在上传文件成功后返回一段信息，详情见{@link FileHandleStatus}， 并在@ttl后自动/过期/删除
+     * @throws IOException
+     */
+    public FileHandleStatus saveFileByStream(String fileName, InputStream stream, String ttl) throws IOException {
+        return saveFileByStream(fileName, stream, ContentType.DEFAULT_BINARY, ttl);
+    }
 
     /**
      * Save a file.
@@ -74,10 +92,11 @@ public class FileTemplate implements InitializingBean, DisposableBean {
      * @param fileName    文件名
      * @param stream      文件应以InputStream的形式传入该接口
      * @param contentType 文件内容类型
-     * @return {@link FileHandleStatus}
+     * @param ttl file expiration time limit, example: 3m for 3 minutes. units: m-minute, h-hour, d-day, w-week, M-month, y-year
+     * @return SeaweedFS会在上传文件成功后返回一段信息，详情见{@link FileHandleStatus}， 并在@ttl后自动/过期/删除
      * @throws IOException Http connection is fail or server response within some error message.
      */
-    private FileHandleStatus saveFileByStream(String fileName, InputStream stream, ContentType contentType)
+    private FileHandleStatus saveFileByStream(String fileName, InputStream stream, ContentType contentType, String ttl)
             throws IOException {
         // Assign file key
         final AssignFileKeyResult assignFileKeyResult =
@@ -95,7 +114,7 @@ public class FileTemplate implements InitializingBean, DisposableBean {
                         uploadUrl,
                         assignFileKeyResult.getFid(),
                         fileName, stream,
-                        timeToLive, contentType), uploadUrl);
+                        ttl.isEmpty() ? timeToLive : ttl, contentType), uploadUrl);
     }
 
     /**
