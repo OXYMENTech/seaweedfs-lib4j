@@ -1,16 +1,14 @@
 package net.anumbrella.seaweedfs.core;
 
+import java.io.IOException;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.anumbrella.seaweedfs.core.content.ForceGarbageCollectionParams;
-import net.anumbrella.seaweedfs.core.content.LookupVolumeResult;
-import net.anumbrella.seaweedfs.core.content.PreAllocateVolumesParams;
-import net.anumbrella.seaweedfs.core.http.HeaderResponse;
-import net.anumbrella.seaweedfs.core.http.JsonResponse;
-import net.anumbrella.seaweedfs.core.http.StreamResponse;
-import net.anumbrella.seaweedfs.core.topology.*;
-import net.anumbrella.seaweedfs.exception.SeaweedfsException;
-import net.anumbrella.seaweedfs.util.ConnectionUtil;
-import net.anumbrella.seaweedfs.util.RequestPathStrategy;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
@@ -34,12 +32,22 @@ import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import net.anumbrella.seaweedfs.core.content.ForceGarbageCollectionParams;
+import net.anumbrella.seaweedfs.core.content.LookupVolumeResult;
+import net.anumbrella.seaweedfs.core.content.PreAllocateVolumesParams;
+import net.anumbrella.seaweedfs.core.http.HeaderResponse;
+import net.anumbrella.seaweedfs.core.http.JsonResponse;
+import net.anumbrella.seaweedfs.core.http.StreamResponse;
+import net.anumbrella.seaweedfs.core.topology.DataCenter;
+import net.anumbrella.seaweedfs.core.topology.DataNode;
+import net.anumbrella.seaweedfs.core.topology.Layout;
+import net.anumbrella.seaweedfs.core.topology.MasterStatus;
+import net.anumbrella.seaweedfs.core.topology.Rack;
+import net.anumbrella.seaweedfs.core.topology.SystemClusterStatus;
+import net.anumbrella.seaweedfs.core.topology.SystemTopologyStatus;
+import net.anumbrella.seaweedfs.exception.SeaweedfsException;
+import net.anumbrella.seaweedfs.util.ConnectionUtil;
+import net.anumbrella.seaweedfs.util.RequestPathStrategy;
 
 public class Connection {
 
@@ -134,13 +142,12 @@ public class Connection {
             CacheManagerBuilder builder = CacheManagerBuilder.newCacheManagerBuilder();
             this.cacheManager = builder.build(true);
             if (enableLookupVolumeCache)
-                this.cacheManager.createCache(LOOKUP_VOLUME_CACHE_ALIAS,
-                        CacheConfigurationBuilder
-                                .newCacheConfigurationBuilder(Long.class, LookupVolumeResult.class,
-                                        ResourcePoolsBuilder.heap(this.lookupVolumeCacheEntries))
-                                .withExpiry(ExpiryPolicyBuilder
-                                        .timeToLiveExpiration(Duration.ofSeconds(this.lookupVolumeCacheExpiry)))
-                                .build());
+                this.cacheManager.createCache(LOOKUP_VOLUME_CACHE_ALIAS, CacheConfigurationBuilder
+                        .newCacheConfigurationBuilder(Long.class, LookupVolumeResult.class,
+                                ResourcePoolsBuilder.heap(this.lookupVolumeCacheEntries))
+                        .withExpiry(ExpiryPolicyBuilder
+                                .timeToLiveExpiration(Duration.ofSeconds(this.lookupVolumeCacheExpiry)))
+                        .build());
         }
     }
 
@@ -389,24 +396,29 @@ public class Connection {
         Map map = objectMapper.readValue(jsonResponse.json, Map.class);
 
         // Fetch data center from json
-        List<DataCenter> dataCenters = new ArrayList<>();
-        ArrayList<Map<String, Object>> rawDcs = ((ArrayList<Map<String, Object>>) ((Map) (map.get("Topology")))
-                .get("DataCenters"));
+        List<DataCenter> dataCenters = new ArrayList<>();        
+        Map topology = (Map) (map.get("Topology"));
+
+        Integer globalFree = (Integer) topology.get("Free");
+        Integer globalMax = (Integer) topology.get("Max");
+
+        ArrayList<Map<String, Object>> rawDcs = ((ArrayList<Map<String, Object>>) topology.get("DataCenters"));
+        
         if (rawDcs != null)
             for (Map<String, Object> rawDc : rawDcs) {
                 DataCenter dc = new DataCenter();
-                dc.setFree((Integer) rawDc.get("Free"));
+                dc.setFree(rawDc.containsKey("Free") ? (Integer) rawDc.get("Free") : globalFree);
                 dc.setId((String) rawDc.get("Id"));
-                dc.setMax((Integer) rawDc.get("Max"));
+                dc.setMax( rawDc.containsKey("Max") ? (Integer) rawDc.get("Max") : globalMax);
 
                 List<Rack> racks = new ArrayList<Rack>();
                 ArrayList<Map<String, Object>> rawRks = ((ArrayList<Map<String, Object>>) (rawDc.get("Racks")));
                 if (rawRks != null)
                     for (Map<String, Object> rawRk : rawRks) {
                         Rack rk = new Rack();
-                        rk.setMax((Integer) rawRk.get("Max"));
+                        rk.setMax(rawRk.containsKey("Max") ? (Integer) rawRk.get("Max") : globalMax);
                         rk.setId((String) rawRk.get("Id"));
-                        rk.setFree((Integer) rawRk.get("Free"));
+                        rk.setFree(rawRk.containsKey("Free") ? (Integer) rawRk.get("Free") : globalFree);
 
                         List<DataNode> dataNodes = new ArrayList<DataNode>();
                         ArrayList<Map<String, Object>> rawDns = ((ArrayList<Map<String, Object>>) (rawRk
@@ -415,7 +427,7 @@ public class Connection {
                         if (rawDns != null)
                             for (Map<String, Object> rawDn : rawDns) {
                                 DataNode dn = new DataNode();
-                                dn.setFree((Integer) rawDn.get("Free"));
+                                dn.setFree(rawDn.containsKey("Free") ? (Integer) rawDn.get("Free") : globalFree);
                                 dn.setMax((Integer) rawDn.get("Max"));
                                 dn.setVolumes((Integer) rawDn.get("Volumes"));
                                 dn.setUrl((String) rawDn.get("Url"));
@@ -480,7 +492,7 @@ public class Connection {
                 jsonResponse = new JsonResponse(EntityUtils.toString(entity), response.getStatusLine().getStatusCode());
                 EntityUtils.consume(entity);
             } else {
-                //SeaweedFS在删除的时候，经常会只返回一个204，这里处理204代码
+                // SeaweedFS在删除的时候，经常会只返回一个204，这里处理204代码
                 jsonResponse = new JsonResponse("", response.getStatusLine().getStatusCode());
             }
         } catch (Exception e) {
@@ -636,7 +648,6 @@ public class Connection {
         }
         return headerResponse;
     }
-
 
     /**
      * Thread for close expired connections.
