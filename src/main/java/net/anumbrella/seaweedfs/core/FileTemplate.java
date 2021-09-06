@@ -38,6 +38,11 @@ public class FileTemplate implements InitializingBean, DisposableBean {
     private int sameRackCount = 0;
     private int diffRackCount = 0;
     private int diffDataCenterCount = 0;
+
+    private String operation;
+    private String rack;
+    private Integer maxChunkSize; //in MB
+
     /**
      * 复制规则，默认000，即不复制
      */
@@ -384,6 +389,45 @@ public class FileTemplate implements InitializingBean, DisposableBean {
         buildAssignFileKeyParams();
     }
 
+    public void setRack(String rack) {
+        if (rack != null && rack.trim().isEmpty()) {
+            this.rack = null;
+        } else {
+            this.rack = rack;
+        }
+        buildAssignFileKeyParams();
+    }
+
+    public void setMaxChunkSize(Integer maxMB) {
+        if (maxMB != null) {
+            this.maxChunkSize = null;
+        } else {
+            this.maxChunkSize = maxMB;
+        }
+        buildAssignFileKeyParams();
+    }
+
+    public Integer getMaxChunkSize() {
+        return maxChunkSize;
+    }
+
+    public String getRack() {
+        return rack;
+    }
+
+    public void setOperation(String operation) {
+        if (operation != null && operation.trim().isEmpty()) {
+            this.operation = null;
+        } else {
+            this.operation = operation;
+        }
+        buildAssignFileKeyParams();
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
     public String getDataCenter() {
         return dataCenter;
     }
@@ -421,6 +465,9 @@ public class FileTemplate implements InitializingBean, DisposableBean {
         params.setReplication(replicationFlag);
         params.setDataCenter(dataCenter);
         params.setCollection(collection);
+        params.setOp(operation);
+        params.setRack(rack);
+        params.setMaxMB(maxChunkSize);
         this.assignFileKeyParams = params;
     }
 

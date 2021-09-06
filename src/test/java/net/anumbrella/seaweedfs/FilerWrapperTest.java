@@ -1,15 +1,20 @@
 package net.anumbrella.seaweedfs;
 
-import net.anumbrella.seaweedfs.core.ConnectionProperties;
-import net.anumbrella.seaweedfs.core.FileSource;
-import net.anumbrella.seaweedfs.core.FilerWrapper;
-import net.anumbrella.seaweedfs.core.http.StreamResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.http.entity.ContentType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.*;
+import net.anumbrella.seaweedfs.core.ConnectionProperties;
+import net.anumbrella.seaweedfs.core.FileSource;
+import net.anumbrella.seaweedfs.core.FilerWrapper;
+import net.anumbrella.seaweedfs.core.http.StreamResponse;
 
 public class FilerWrapperTest {
     private static FileSource fileSource = new FileSource();
@@ -25,9 +30,10 @@ public class FilerWrapperTest {
     @Test
     public void testUploadFile() throws IOException {
         FilerWrapper filerWrapper = new FilerWrapper(fileSource.getConnection());
-        File file = new File("C:\\Users\\zhiqu\\Downloads\\reba.jpg");
+        File file = new File("/Users/neeson/Downloads/IMG_3475.jpg");
+
         InputStream inputStream = new FileInputStream(file);
-        long size = filerWrapper.uploadFile("http://localhost:8888/test/", "reba.jpg", inputStream, ContentType.DEFAULT_BINARY);
+        long size = filerWrapper.uploadFile("http://192.168.0.111:8888/test/", "reba.jpg", inputStream, ContentType.DEFAULT_BINARY);
         Assert.assertNotEquals(0, size);
     }
 

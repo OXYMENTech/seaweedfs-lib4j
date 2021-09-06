@@ -19,7 +19,7 @@ public class FileSourceTest {
     @Before
     public void setUp() {
         ConnectionProperties connectionProperties
-                = new ConnectionProperties.Builder().host("192.168.0.131").port(9333).maxConnection(100).build();
+                = new ConnectionProperties.Builder().host("192.168.0.111").port(9333).maxConnection(100).build();
         fileSource.setProperties(connectionProperties);
         fileSource.startup();
     }
@@ -34,7 +34,7 @@ public class FileSourceTest {
     public void testUpload() throws IOException {
         Connection connection = fileSource.getConnection();
         FileTemplate fileTemplate = new FileTemplate(connection);
-        File file = new File("/Users/neeson/Downloads/download.png");
+        File file = new File("/Users/neeson/Downloads/IMG_3475.jpg");
         FileInputStream fileInputStream = new FileInputStream(file);
         FileHandleStatus fileHandleStatus = fileTemplate.saveFileByStream("reba.jpg", fileInputStream);
         System.out.println(fileHandleStatus.getFileId());
@@ -45,7 +45,7 @@ public class FileSourceTest {
     public void testDeleteFile() throws IOException {
         Connection connection = fileSource.getConnection();
         FileTemplate fileTemplate = new FileTemplate(connection);
-        File file = new File("/Users/neeson/Downloads/order-1610073661681.pdf");
+        File file = new File("/Users/neeson/Downloads/IMG_3475.jpg");
         FileInputStream fileInputStream = new FileInputStream(file);
         FileHandleStatus fileHandleStatus = fileTemplate.saveFileByStream("reba.jpg", fileInputStream);
         fileTemplate.deleteFile(fileHandleStatus.getFileId());

@@ -28,6 +28,23 @@ public class AssignFileKeyParams {
      */
     private String collection;
 
+    /**
+     * file operation, currently only support "append"
+     */
+    private String op;
+
+    private Integer maxMB; // max chunk size
+
+    public String getRack() {
+        return rack;
+    }
+
+    public void setRack(String rack) {
+        this.rack = rack;
+    }
+
+    private String rack;
+
     public AssignFileKeyParams() {
     }
 
@@ -55,6 +72,14 @@ public class AssignFileKeyParams {
         this.count = count;
     }
 
+    public String getOp() {
+        return op;
+    }
+
+    public void setOp(String op) {
+        this.op = op;
+    }
+
     public String getDataCenter() {
         return dataCenter;
     }
@@ -69,6 +94,14 @@ public class AssignFileKeyParams {
 
     public void setTtl(String ttl) {
         this.ttl = ttl;
+    }
+
+    public Integer getMaxMB() {
+        return maxMB;
+    }
+
+    public void setMaxMB(Integer maxMB) {
+        this.maxMB = maxMB;
     }
 
     public String getCollection() {
@@ -94,8 +127,18 @@ public class AssignFileKeyParams {
             result = result + "count=" + Integer.toString(count) + "&";
         }
         if (ttl != null) {
-            result = result + "ttl=" + ttl;
+            result = result + "ttl=" + ttl + "&";
         }
+        if (op != null) {
+            result = result + "op=" + op + "&";
+        }
+        if (rack != null) {
+            result = result + "rack=" + rack + "&";
+        }
+        if (maxMB != null) {
+            result = result + "maxMB=" + maxMB;
+        }
+
         return result;
     }
 
@@ -107,6 +150,9 @@ public class AssignFileKeyParams {
                 .add("dataCenter", dataCenter)
                 .add("ttl", ttl)
                 .add("collection", collection)
+                .add("operation", op)
+                .add("rack", rack)
+                .add("max chunk size", maxMB)
                 .toString();
     }
 }
