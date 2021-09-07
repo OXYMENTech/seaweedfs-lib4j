@@ -25,6 +25,35 @@ public class FileSystemTest {
     }
 
     @Test
+    public void uploadFileWithTTL() {
+
+        FileSystem ofs = new FileSystem("192.168.0.111", 9333, 20);
+
+
+        File file = new File("/Users/neeson/Downloads/IMG_3475.jpg");
+        FileHandleStatus fhs = ofs.saveFile(file);
+
+        System.out.println(fhs.toString());
+
+        ofs.stop();
+    }
+
+
+    @Test
+    public void uploadFileWithRandomName() {
+
+        FileSystem ofs = new FileSystem("192.168.0.111", 9333, 20);
+
+
+        File file = new File("/Users/neeson/Downloads/IMG_3475.jpg");
+        FileHandleStatus fhs = ofs.saveFileWithRandomName(file);
+
+        System.out.println(fhs.toString());
+
+        ofs.stop();
+    }
+
+    @Test
     public void getFileHandlerStatus() {
 
         FileSystem ofs = new FileSystem("192.168.0.111", 9333, 20);
@@ -89,7 +118,7 @@ public class FileSystemTest {
 
         FileSystem ofs = new FileSystem("192.168.0.111", 9333, 20);
 
-        File file = ofs.getFileWithOriginalName("7,0641b6d06e");
+        File file = ofs.getFileWithOriginalName("5,1749ad914a");
 
         System.out.println(file.getAbsolutePath());
 

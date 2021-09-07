@@ -42,7 +42,7 @@ public class FileSystem {
 
     public FileHandleStatus saveFile(File file) {
 
-        return this.saveFile(file, null, null, null, null, null, null, 0, 0, 0, null);
+        return this.saveFile(file, null, null, null, null, null, null, 0, 0, 0, null, false);
     }
 
     /**
@@ -55,16 +55,42 @@ public class FileSystem {
      */
     public FileHandleStatus saveFile(File file, String ttl) {
 
-        return this.saveFile(file, null, ttl, null, null, null, null, 0, 0, 0, null);
+        return this.saveFile(file, null, ttl, null, null, null, null, 0, 0, 0, null, false);
+    }
+
+    public FileHandleStatus saveFileWithRandomName(File file) {
+        return this.saveFile(file, null, null, null, null, null, null, 0, 0, 0, null, true);
+    }
+
+    public FileHandleStatus saveFileWithRandomName(File file, String ttl) {
+        return this.saveFile(file, null, ttl, null, null, null, null, 0, 0, 0, null, true);
+    }
+
+    public FileHandleStatus saveFileWithName(File file, String name) {
+
+        return this.saveFile(file, name, null, null, null, null, null, 0, 0, 0, null, false);
+    }
+
+    public FileHandleStatus saveFileWithName(File file, String name, String ttl) {
+
+        return this.saveFile(file, name, ttl, null, null, null, null, 0, 0, 0, null, false);
     }
 
     public FileHandleStatus saveFile(File file, String fileName, String ttl, String operation, String dataCenter,
             String rack, String collection,
 
             int replicateOnDiffDataCenterCount, int replicateOnDiffRackCount, int replicateOnSameRackCount,
-            Integer maxChunkSize) {
+            Integer maxChunkSize, Boolean randomName) {
 
-        String fileName2 = StrUtil.isNotEmpty(fileName) ? fileName : FileUtil.getName(file);
+
+        String fileName2;
+        
+        if (randomName != null && randomName) {
+            fileName2 = RandomUtil.randomString(8) + "_" + DateUtil.format(new Date(), "yyyyMMddHHmm") + "." + FileUtil.getSuffix(file);
+        } else {
+            fileName2 = StrUtil.isNotEmpty(fileName) ? fileName : FileUtil.getName(file);
+        }
+
 
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
 
