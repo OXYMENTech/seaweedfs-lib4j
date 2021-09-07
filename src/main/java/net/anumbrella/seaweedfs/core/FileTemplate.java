@@ -13,6 +13,7 @@ import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import cn.hutool.core.util.StrUtil;
 import net.anumbrella.seaweedfs.core.content.AssignFileKeyParams;
 import net.anumbrella.seaweedfs.core.content.AssignFileKeyResult;
 import net.anumbrella.seaweedfs.core.content.LocationResult;
@@ -300,11 +301,11 @@ public class FileTemplate implements InitializingBean, DisposableBean {
     public FileHandleStatus getFileStatus(String fileId) throws IOException {
         final String targetUrl = getTargetUrl(fileId);
         HeaderResponse headerResponse = volumeWrapper.getFileStatusHeader(targetUrl, fileId);
+
         try {
             return new FileHandleStatus(fileId,
                     headerDateFormat.parse(headerResponse.getLastHeader("Last-Modified").getValue()).getTime(),
-                    headerResponse.getLastHeader("Content-Disposition").getValue()
-                            .substring(10, headerResponse.getLastHeader("Content-Disposition").getValue().length() - 1),
+                    StrUtil.subBetween(headerResponse.getLastHeader("Content-Disposition").getValue(), "\"", "\""),
                     headerResponse.getLastHeader("Content-Type").getValue(),
                     Long.parseLong(headerResponse.getLastHeader("Content-Length").getValue()));
         } catch (ParseException e) {

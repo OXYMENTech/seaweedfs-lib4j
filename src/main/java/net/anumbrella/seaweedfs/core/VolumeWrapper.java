@@ -138,7 +138,9 @@ public class VolumeWrapper {
      * @throws IOException Http connection is fail or server response within some error message.
      */
     public HeaderResponse getFileStatusHeader(String url, String fid) throws IOException {
+
         HttpHead request = new HttpHead(url + "/" + fid);
+
         HeaderResponse cache = connection.fetchHeaderByRequest(request);
         Utils.convertResponseStatusToException(cache.getHttpResponseStatusCode(), url, fid, false, false, false, false);
         return cache;

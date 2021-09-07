@@ -2,6 +2,12 @@ package net.anumbrella.seaweedfs.core.file;
 
 import java.io.Serializable;
 
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
+
+import cn.hutool.core.util.StrUtil;
+
 public class FileHandleStatus implements Serializable{
 
     private String fileId;
@@ -10,6 +16,10 @@ public class FileHandleStatus implements Serializable{
     private String contentType;
     private long size;
     private String fileUrl;
+    private String extension;
+    
+
+
 
 
     public FileHandleStatus(String fileId, long lastModified, String fileName, String contentType, long size) {
@@ -18,11 +28,35 @@ public class FileHandleStatus implements Serializable{
         this.fileName = fileName;
         this.contentType = contentType;
         this.size = size;
+
+
+        if (StrUtil.isNotEmpty(this.contentType)) {
+            MimeType type;
+            try {
+                type = MimeTypes.getDefaultMimeTypes().forName(this.contentType);
+
+                this.extension = type.getExtension();
+            } catch (MimeTypeException e) {
+                e.printStackTrace();
+            }
+            
+        }
     }
 
     public FileHandleStatus(String fileId, long size) {
         this.fileId = fileId;
         this.size = size;
+    }
+
+
+    
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
     public FileHandleStatus(long size) {
@@ -65,9 +99,11 @@ public class FileHandleStatus implements Serializable{
 
     @Override
     public String toString() {
-        return "FileHandleStatus{" +
-                "fileId='" + fileId + '\'' +
-                ", size=" + size +
-                '}';
+        return "FileHandleStatus [contentType=" + contentType + ", extension=" + extension + ", fileId=" + fileId
+                + ", fileName=" + fileName + ", fileUrl=" + fileUrl + ", lastModified=" + lastModified + ", size="
+                + size + "]";
     }
+
+    
+    
 }

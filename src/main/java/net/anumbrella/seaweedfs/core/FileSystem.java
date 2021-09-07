@@ -2,21 +2,20 @@ package net.anumbrella.seaweedfs.core;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.file.PathUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import net.anumbrella.seaweedfs.core.file.FileHandleStatus;
-import net.anumbrella.seaweedfs.core.http.StreamResponse;
 
 public class FileSystem {
 
@@ -169,22 +168,95 @@ public class FileSystem {
         }
     }
 
-    // public void getFile(String fileId) {
+    public File getFileWithOriginalName(String fileId) {
 
-    //     Connection connection = fileSource.getConnection();
-    //     FileTemplate fileTemplate = new FileTemplate(connection);
+        return this.getFile(fileId, null, null, true);
+    }
 
-    //     try {
+    public File getFile(String fileId) {
 
-    //         InputStream is =  fileTemplate.getFileStream(fileId).getInputStream();
-    //         File tempFile = File.createTempFile("", "")
-            
-    //         File file = new File(os)
+        return this.getFile(fileId, null, null, null);
+    }
 
-    //     } catch (Exception e) {
-            
-    //     }
-        
+    public File getFile(String fileId, String newName) {
 
-    // }
+        return this.getFile(fileId, newName, null, null);
+    }
+
+    public File getFile(String fileId, Boolean nameWithDate) {
+
+        return this.getFile(fileId, null, nameWithDate, null);
+    }
+
+    public File getFile(String fileId, String newName, Boolean nameWithDate) {
+
+        return this.getFile(fileId, newName, nameWithDate, null);
+    }
+
+    public File getFile(String fileId, String newName, Boolean nameWithDate, Boolean useOriginalName) {
+
+        Connection connection = fileSource.getConnection();
+        FileTemplate fileTemplate = new FileTemplate(connection);
+
+        try (InputStream is = fileTemplate.getFileStream(fileId).getInputStream()) {
+
+            FileHandleStatus fhs = this.getFileStatus(fileId);
+            File tempFile;
+
+            if (useOriginalName != null) {
+                tempFile = new File(FileUtil.getTmpDirPath() + "/" + fhs.getFileName());
+            } else {
+
+                if (StrUtil.isNotEmpty(newName)) {
+                    if (nameWithDate != null) {
+                        tempFile = new File(FileUtil.getTmpDirPath() + "/" + newName + "_"
+                                + DateUtil.format(new Date(), "yyyyMMddHHmm") + fhs.getExtension());
+                    } else {
+                        tempFile = new File(FileUtil.getTmpDirPath() + "/" + newName + fhs.getExtension());
+                    }
+                } else {
+                    if (nameWithDate != null) {
+                        tempFile = File.createTempFile(DateUtil.format(new Date(), "yyyyMMddHHmm"), fhs.getFileName());
+                    } else {
+                        tempFile = File.createTempFile(RandomUtil.randomString(4), fhs.getFileName());
+                    }
+                }
+            }
+
+            FileUtil.writeFromStream(is, tempFile);
+
+            this.logger.info("File with id {} has been retrieved.", fileId);
+            this.logger.info("File Handler Status: {}", fhs.toString());
+
+            return tempFile;
+
+        } catch (Exception e) {
+            this.logger.error("Error happened when retrieving file {}", fileId);
+            this.logger.error("{}", e.getLocalizedMessage());
+            return null;
+        }
+
+    }
+
+    public FileHandleStatus getFileStatus(String fileId) {
+
+        Connection connection = fileSource.getConnection();
+        FileTemplate fileTemplate = new FileTemplate(connection);
+
+        try {
+
+            FileHandleStatus fhs = fileTemplate.getFileStatus(fileId);
+
+            this.logger.info("File Handler Status with id {} has been retrieved.", fileId);
+            this.logger.info("File Handler Status: {}", fhs.toString());
+
+            return fhs;
+        } catch (Exception e) {
+
+            this.logger.error("Error happened when retrieving file {}", fileId);
+            this.logger.error("{}", e.getLocalizedMessage());
+            return null;
+        }
+
+    }
 }
