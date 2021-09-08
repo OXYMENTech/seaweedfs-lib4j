@@ -129,4 +129,16 @@ public class FileSystemTest {
 
         ofs.stop();
     }
+
+
+    @Test
+    public void testDeleteCollection() {
+
+        FileSystem ofs = new FileSystem("192.168.0.111", 9333, 20);
+
+        ofs.deleteCollection("ABC");
+
+        ofs.stop();
+        
+    }
 }

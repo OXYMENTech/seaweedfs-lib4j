@@ -15,7 +15,11 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import net.anumbrella.seaweedfs.core.content.ForceGarbageCollectionParams;
+import net.anumbrella.seaweedfs.core.content.LookupVolumeParams;
+import net.anumbrella.seaweedfs.core.content.LookupVolumeResult;
 import net.anumbrella.seaweedfs.core.file.FileHandleStatus;
+import net.anumbrella.seaweedfs.core.topology.GarbageResult;
 
 public class FileSystem {
 
@@ -316,5 +320,58 @@ public class FileSystem {
             return null;
         }
 
+    }
+
+    public LookupVolumeResult LookupVolume(LookupVolumeParams params) {
+
+        try {
+            return new MasterWrapper(fileSource.getConnection()).lookupVolume(params);
+        } catch (IOException e) {
+            
+            this.logger.error("Error happened when retrieving volume lookup information");
+            this.logger.error(e.getLocalizedMessage());
+            return null;
+        }
+    }
+
+    public int deleteCollection(String collection) {
+        try {
+            Connection connection = fileSource.getConnection();
+            MasterWrapper masterWrapper = new MasterWrapper(connection);
+
+            this.logger.info("Trying to delete collection {}, from url: {}", collection, connection.getLeaderUrl().toString());
+
+            return masterWrapper.deleteCollection(connection.getLeaderUrl().toString(), collection);
+        } catch (Exception e) {
+
+            this.logger.error("Error happened when deleting collection {}", collection);
+            this.logger.error(e.getLocalizedMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * 手动触发强制垃圾回收
+     * 
+     * @param params - 参数重的threshold参数参考值为0.4f
+     * @return
+     */
+    public GarbageResult garbageCollect(ForceGarbageCollectionParams params) {
+
+        try {
+            Connection connection = fileSource.getConnection();
+            MasterWrapper masterWrapper = new MasterWrapper(connection);
+
+            GarbageResult garbageResult = masterWrapper.forceGarbageCollection(params);
+
+            this.logger.info("Garbage collection triggered, params: {}", params.toString());
+
+            return garbageResult;
+        } catch (Exception e) {
+            
+            this.logger.error("Error happened when doing garbage collection");
+            this.logger.error(e.getLocalizedMessage());
+            return null;
+        }
     }
 }
