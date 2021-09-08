@@ -66,16 +66,48 @@ public class FileSystem {
         return this.saveFile(file, null, ttl, null, null, null, null, 0, 0, 0, null, true);
     }
 
+    /**
+     * 使用指定文件名保存文件
+     * 
+     * @param file
+     * @param name - 指定的文件
+     * @return
+     */
     public FileHandleStatus saveFileWithName(File file, String name) {
 
         return this.saveFile(file, name, null, null, null, null, null, 0, 0, 0, null, false);
     }
 
+    /**
+     * 使用指定文件名保存文件
+     * 
+     * @param file
+     * @param name
+     * @param ttl - 有效时间
+     * @return
+     */
     public FileHandleStatus saveFileWithName(File file, String name, String ttl) {
 
         return this.saveFile(file, name, ttl, null, null, null, null, 0, 0, 0, null, false);
     }
 
+    /**
+     * 复杂保存
+     * 
+     * @param file
+     * @param fileName
+     * @param ttl
+     * @param operation - 操作类型，目前仅支持append
+     * @param dataCenter - 指定的数据中心
+     * @param rack - 指定的数据柜
+     * @param collection - 指定的collection位置
+     * @param replicateOnDiffDataCenterCount - 在不同数据中复制的多少份，默认为0，不复制
+     * @param replicateOnDiffRackCount  - 在不同数据柜中复制多少份，默认为0，不复制
+     * @param replicateOnSameRackCount - 在相同数据柜中复制多少份，默认为0， 不复制
+     * @param maxChunkSize - 最大chunk size
+     * @param randomName - 是否使用随机文件名，该参数设为true后，fileName参数会失效
+     * @return
+     */
     public FileHandleStatus saveFile(File file, String fileName, String ttl, String operation, String dataCenter,
             String rack, String collection,
 

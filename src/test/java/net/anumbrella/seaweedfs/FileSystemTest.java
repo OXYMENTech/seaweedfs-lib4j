@@ -5,6 +5,7 @@ import java.io.File;
 import org.junit.Test;
 
 import net.anumbrella.seaweedfs.core.FileSystem;
+import net.anumbrella.seaweedfs.core.TTL;
 import net.anumbrella.seaweedfs.core.file.FileHandleStatus;
 
 public class FileSystemTest {
@@ -31,7 +32,7 @@ public class FileSystemTest {
 
 
         File file = new File("/Users/neeson/Downloads/IMG_3475.jpg");
-        FileHandleStatus fhs = ofs.saveFile(file);
+        FileHandleStatus fhs = ofs.saveFile(file, TTL.minutes(1));
 
         System.out.println(fhs.toString());
 
@@ -70,10 +71,14 @@ public class FileSystemTest {
 
         FileSystem ofs = new FileSystem("192.168.0.111", 9333, 20);
 
-        File file = ofs.getFile("7,0641b6d06e");
+        File file = ofs.getFile("11,1ab89c58aa");
 
-        System.out.println(file.getAbsolutePath());
-
+        if (file != null) {
+            System.out.println(file.getAbsolutePath());
+        } else {
+            System.out.println("File does not exist!");
+        }
+        
         ofs.stop();
     }
 
