@@ -10,28 +10,28 @@
 
 ##### Create a connection manager
 ```java
-FileSource fileSource = new FileSource();
-ConnectionProperties connectionProperties
-                = new ConnectionProperties.Builder()
-                    .host("localhost")
-                    .port(9333)
-                    .maxConnection(100).build();
-// Startup manager and listens for the change
-fileSource.startup();
+    
+    FileSystem ofs = new FileSystem("192.168.0.111", 9333, 20);
+
+
+    File file = new File("/Users/luck/Downloads/IMG_3475.jpg");
+    FileHandleStatus fhs = ofs.saveFile(file);
+
+    System.out.println(fhs.toString());
+
+    ofs.stop();
 ```
 
-##### Create a file operation template
+##### API Reference
 ```java
-// Template used with connection manager
-FileTemplate template = new FileTemplate(fileSource.getConnection());
-template.saveFileByStream("filename.doc", someFile);
+FileSystemTest.java
 ```
 
 ## License
 
 The Apache Software License, Version 2.0
 
-Copyright  [2017]  [Anumbrella]
+Copyright  [2021]  [Anumbrella]
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
