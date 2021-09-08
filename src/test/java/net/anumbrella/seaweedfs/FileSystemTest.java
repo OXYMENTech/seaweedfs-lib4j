@@ -4,9 +4,9 @@ import java.io.File;
 
 import org.junit.Test;
 
-import net.anumbrella.seaweedfs.core.FileSystem;
-import net.anumbrella.seaweedfs.core.TTL;
-import net.anumbrella.seaweedfs.core.file.FileHandleStatus;
+import tech.oxymen.seaweedfs.core.FileSystem;
+import tech.oxymen.seaweedfs.core.TTL;
+import tech.oxymen.seaweedfs.core.file.FileHandleStatus;
 
 public class FileSystemTest {
     

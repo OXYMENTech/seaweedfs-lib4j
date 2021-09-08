@@ -8,11 +8,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import net.anumbrella.seaweedfs.core.Connection;
-import net.anumbrella.seaweedfs.core.ConnectionProperties;
-import net.anumbrella.seaweedfs.core.FileSource;
-import net.anumbrella.seaweedfs.core.FileTemplate;
-import net.anumbrella.seaweedfs.core.file.FileHandleStatus;
+import tech.oxymen.seaweedfs.core.Connection;
+import tech.oxymen.seaweedfs.core.ConnectionProperties;
+import tech.oxymen.seaweedfs.core.FileSource;
+import tech.oxymen.seaweedfs.core.FileTemplate;
+import tech.oxymen.seaweedfs.core.file.FileHandleStatus;
 
 public class FileSourceTest {
     private static FileSource fileSource = new FileSource();

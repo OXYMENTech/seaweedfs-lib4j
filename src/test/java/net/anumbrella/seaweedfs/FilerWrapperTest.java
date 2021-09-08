@@ -11,10 +11,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import net.anumbrella.seaweedfs.core.ConnectionProperties;
-import net.anumbrella.seaweedfs.core.FileSource;
-import net.anumbrella.seaweedfs.core.FilerWrapper;
-import net.anumbrella.seaweedfs.core.http.StreamResponse;
+import tech.oxymen.seaweedfs.core.ConnectionProperties;
+import tech.oxymen.seaweedfs.core.FileSource;
+import tech.oxymen.seaweedfs.core.FilerWrapper;
+import tech.oxymen.seaweedfs.core.http.StreamResponse;
 
 public class FilerWrapperTest {
     private static FileSource fileSource = new FileSource();

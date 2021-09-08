@@ -1,21 +1,23 @@
 package net.anumbrella.seaweedfs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.anumbrella.seaweedfs.core.Connection;
-import net.anumbrella.seaweedfs.core.ConnectionProperties;
-import net.anumbrella.seaweedfs.core.FileSource;
-import net.anumbrella.seaweedfs.core.VolumeWrapper;
-import net.anumbrella.seaweedfs.core.content.AssignFileKeyResult;
-import net.anumbrella.seaweedfs.core.http.HeaderResponse;
-import net.anumbrella.seaweedfs.core.http.JsonResponse;
-import net.anumbrella.seaweedfs.core.http.StreamResponse;
-import net.anumbrella.seaweedfs.core.topology.VolumeStatus;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.ContentType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import tech.oxymen.seaweedfs.core.Connection;
+import tech.oxymen.seaweedfs.core.ConnectionProperties;
+import tech.oxymen.seaweedfs.core.FileSource;
+import tech.oxymen.seaweedfs.core.VolumeWrapper;
+import tech.oxymen.seaweedfs.core.content.AssignFileKeyResult;
+import tech.oxymen.seaweedfs.core.http.HeaderResponse;
+import tech.oxymen.seaweedfs.core.http.JsonResponse;
+import tech.oxymen.seaweedfs.core.http.StreamResponse;
+import tech.oxymen.seaweedfs.core.topology.VolumeStatus;
 
 import java.io.File;
 import java.io.FileInputStream;
