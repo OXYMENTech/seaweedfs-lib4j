@@ -1,12 +1,24 @@
 # SeaweedFS Client For Java
+[![Maven Central](https://img.shields.io/maven-central/v/tech.oxymen.seaweedfs/seaweedfs-lib4j.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.oxymen.seaweedfs%22%20AND%20a:%22seaweedfs-lib4j%22)
 
-[![Maven Central](http://img.shields.io/badge/maven_central-0.0.2.RELEASE-brightgreen.svg)](https://search.maven.org/#artifactdetails%7Corg.lokra.seaweedfs%7Cseaweedfs-client%7C0.7.3.RELEASE%7Cjar)
-[![GitHub Release](http://img.shields.io/badge/Release-0.0.2.RELEASE-brightgreen.svg)](https://github.com/lokra-platform/seaweedfs-client/releases/tag/0.7.3.RELEASE)
+
 [![Apache license](https://img.shields.io/badge/license-Apache-blue.svg)](http://opensource.org/licenses/Apache)
 
 
 
 # Quick Start
+
+##### Maven
+```maven
+    
+ <dependency>
+   <groupId>tech.oxymen.seaweedfs</groupId>
+   <artifactId>seaweedfs-lib4j</artifactId>
+   <version>1.0.0.RELEASE</version>
+ </dependency>
+
+```
+
 
 ##### Create a connection manager
 ```java
