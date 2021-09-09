@@ -1,7 +1,5 @@
 # SeaweedFS Client For Java
 [![Maven Central](https://img.shields.io/maven-central/v/tech.oxymen.seaweedfs/seaweedfs-lib4j.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.oxymen.seaweedfs%22%20AND%20a:%22seaweedfs-lib4j%22)
-
-
 [![Apache license](https://img.shields.io/badge/license-Apache-blue.svg)](http://opensource.org/licenses/Apache)
 
 
