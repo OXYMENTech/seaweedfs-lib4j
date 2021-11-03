@@ -1,5 +1,8 @@
 package net.anumbrella.seaweedfs;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 
 import org.junit.Test;
@@ -17,11 +20,17 @@ public class FileSystemTest {
         FileSystem ofs = new FileSystem("192.168.0.111", 9333, 20);
 
 
-        File file = new File("/Users/neeson/Downloads/IMG_3475.jpg");
+        File file = new File("/Users/neeson/Downloads/Material.Templates.xlsx");
         FileHandleStatus fhs = ofs.saveFile(file);
 
-        System.out.println(fhs.toString());
+        File f2 = ofs.getFile(fhs.getFileId());
+        
+        FileHandleStatus fStatus = ofs.getFileStatus(fhs.getFileId());
 
+        assertNotNull(f2);
+        assertNotNull(fhs);
+        assertEquals(fhs.getFileId(), fStatus.getFileId());
+        
         ofs.stop();
     }
 

@@ -2,10 +2,13 @@ package tech.oxymen.seaweedfs.core.file;
 
 import java.io.Serializable;
 
+import org.apache.http.Header;
+import org.apache.http.entity.ContentType;
 import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 
 public class FileHandleStatus implements Serializable{
@@ -19,23 +22,26 @@ public class FileHandleStatus implements Serializable{
     private String extension;
     
 
-
-
-
-    public FileHandleStatus(String fileId, long lastModified, String fileName, String contentType, long size) {
+    public FileHandleStatus(String fileId, long lastModified, String fileName, Header contentTypeHeader, long size) {
         this.fileId = fileId;
         this.lastModified = lastModified;
         this.fileName = fileName;
-        this.contentType = contentType;
+        this.contentType = contentTypeHeader == null ? ContentType.DEFAULT_BINARY.toString() : contentTypeHeader.getValue();
         this.size = size;
 
 
         if (StrUtil.isNotEmpty(this.contentType)) {
             MimeType type;
             try {
-                type = MimeTypes.getDefaultMimeTypes().forName(this.contentType);
 
-                this.extension = type.getExtension();
+                if (contentTypeHeader != null) {
+                    
+                    type = MimeTypes.getDefaultMimeTypes().forName(this.contentType);
+                    this.extension = type.getExtension();
+                } else {
+                    this.extension = FileUtil.extName(fileName);
+                }
+                
             } catch (MimeTypeException e) {
                 e.printStackTrace();
             }
