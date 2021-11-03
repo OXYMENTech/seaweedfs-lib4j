@@ -12,7 +12,7 @@
  <dependency>
    <groupId>tech.oxymen.seaweedfs</groupId>
    <artifactId>seaweedfs-lib4j</artifactId>
-   <version>1.0.0.RELEASE</version>
+   <version>1.1.0.RELEASE</version>
  </dependency>
 
 ```
